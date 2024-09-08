@@ -70,9 +70,46 @@ const updateUser = (user) => {
     })
 }
 
+const deleteUser = (json, callback) => {
+    fs.readFile('users.json', (err, data) => {
+        const loja = JSON.parse(data)
+        let usuarios = loja['usuarios']
+        const userSearched = searchUser(usuarios, json.cpf)
+        if(!userSearched)
+            throw "ERROR : Usuario nao encontrado"
+
+        usuarios = usuarios.filter(user => user.cpf !== userSearched.cpf)
+        loja['usuarios'] = usuarios;
+        fs.writeFile('users.json', JSON.stringify(loja, null, 2), (err) => {
+            if (err) throw err;
+            callback("Usuário deletado");
+        });
+    })
+}
+
 module.exports = {
     getUser,
     pushUser,
     updateUser,
-    listUsers
+    listUsers,
+    deleteUser
 }
+
+/*function getUser(json, callback){
+    if(!validarJSON_Get(json))
+        throw "ERROR : Erro no JSON para get"
+    fs.readFile('users.json', (err, data) => {
+        const loja = JSON.parse(data)
+        let usuarios = loja['usuarios']
+        try{
+            const userSearched = searchUser(usuarios, json.cpf)
+            if(!userSearched)
+                throw "ERROR : Usuario nao encontrado"
+            callback(userSearched)
+        }
+        catch (error){
+            console.log(error)
+            callback(undefined)
+        }
+    })
+}*/

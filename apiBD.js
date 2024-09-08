@@ -67,6 +67,19 @@ app.route('/users/admin')
         }
     })
 
+    .delete((req, res) => {
+        if(!req.is('json'))
+            res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+        try{
+            usuariosBD.deleteUser(req.body, (message) => {
+                res.status(200).json({message: message})
+            })
+        }
+        catch (err){
+            res.status(404).json({message : err})
+        }
+    })
+
     
 
 app.listen(port)
