@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { validarJSON } = require('./validateJSON')
 
 const searchUser = (usuarios, cpfSearch) => {
     userSearched = usuarios.find(u => u.cpf === parseInt(cpfSearch))
@@ -24,6 +25,9 @@ function getUser(cpf, callback){
 }
 
 const pushUser = function(user){
+    if(!validarJSON(user))
+        throw "ERROR : Erro no JSON para create"
+
     fs.readFile('users.json', (err, data) => {
         const loja = JSON.parse(data)
         loja.usuarios.push(user)
@@ -34,6 +38,9 @@ const pushUser = function(user){
 }
 
 const updateUser = (user) => {
+    if(!validarJSON(user))
+        throw "ERROR : Erro no JSON para update"
+
     fs.readFile('users.json', (err, data) => {
         const loja = JSON.parse(data)
         const indexUser = loja.usuarios.findIndex((u) => {return u.cpf === parseInt(user.cpf)})
