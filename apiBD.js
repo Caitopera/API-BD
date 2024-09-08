@@ -21,8 +21,10 @@ app.route('/users')
     .post((req, res) => {
         if(!req.is('json'))
             throw 'ERROR : Envie um arquivo no formato .json'
-        usuariosBD.pushUser(req.body)
-        res.send('Usuario Cadastrado')
+        if(!usuariosBD.pushUser(req.body))
+            res.send('Usuario ja esta cadastrado')
+        else
+            res.send('Usuario Cadastrado')
     })
 
     .put((req, res) => {

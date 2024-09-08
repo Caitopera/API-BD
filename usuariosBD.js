@@ -4,7 +4,7 @@ const { validarJSON } = require('./validateJSON')
 const searchUser = (usuarios, cpfSearch) => {
     userSearched = usuarios.find(u => u.cpf === parseInt(cpfSearch))
     if(userSearched === undefined)
-        throw "Error : Usuario nao encontrado"
+        return false
     else
         return userSearched
 }
@@ -15,6 +15,8 @@ function getUser(cpf, callback){
         let usuarios = loja['usuarios']
         try{
             const userSearched = searchUser(usuarios, cpf)
+            if(!userSearched)
+                throw "ERROR : Usuario nao encontrado"
             callback(userSearched)
         }
         catch (error){
@@ -28,13 +30,21 @@ const pushUser = function(user){
     if(!validarJSON(user))
         throw "ERROR : Erro no JSON para create"
 
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        loja.usuarios.push(user)
-        fs.writeFile("users.json", JSON.stringify(loja), (err) => {
-            if(err) throw err
+    try{
+        fs.readFile('users.json', (err, data) => {
+            const loja = JSON.parse(data)
+            if(searchUser(loja.usuarios, user.cpf))
+                return false
+            loja.usuarios.push(user)
+            fs.writeFile("users.json", JSON.stringify(loja), (err) => {
+                if(err) throw err
+            })
         })
-    })
+        return true
+    }
+    catch{
+        return false
+    }
 }
 
 const updateUser = (user) => {
