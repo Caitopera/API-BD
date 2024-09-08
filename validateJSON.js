@@ -15,20 +15,19 @@ const schema = {
 const validarSchemaJSON = (usuario) => {
     const validate = ajv.compile(schema);
     const valid = validate(usuario);
-    if(valid)
-        return valid;
-    else
-        return valid;
+    if(!valid)
+        throw "ERROR : JSON nao segue o schema correto"
+    return valid
 }
 
 const validarDataNascimento = (dateString) => {
     const date = new Date(dateString);
     if(isNaN(date.getTime()))
-        return false
+        throw "ERROR : Data de nascimento nao e uma data no formato correto"
     
     const now = new Date();
     if (date > now) 
-        return false;
+        throw "ERROR : Data de nascimento maior que a data atual"
     
     return true;
 }
@@ -51,17 +50,21 @@ const validarCampos = (usuario) => {
     return true
 }
 
-const data1 = {
-    cpf: 123,
-    nome: "José",
-    data_nascimento: "12-23-2010" 
-};
+const validarJSON = (usuario) => {
+    if(!validarSchemaJSON(usuario))
+        return false
+    if(!validarCampos(usuario))
+        return false
 
-const data2 = {
-    cpf: 12345678987,
-    nome: "José",
-    data_nascimento: "12-02-2030" 
-};
+    return true
+}
 
-if(validarSchemaJSON(data2))
-    console.log(validarCampos(data2))
+/*console.log(validarJSON({
+    "cpf" : 12345678987,
+    "nome" : "Jorge",
+    "data_nascimento" : "12-12-2004"
+}))*/
+
+module.exports = {
+    validarJSON
+}

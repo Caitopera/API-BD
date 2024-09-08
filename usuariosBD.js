@@ -1,17 +1,5 @@
 const fs = require('fs')
 
-
-// Pode ser feita a verificacao de schema JSON aqui
-const pushUser = function(user){
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        loja.usuarios.push(user)
-        fs.writeFile("users.json", JSON.stringify(loja), (err) => {
-            if(err) throw err
-        })
-    })
-}
-
 const searchUser = (usuarios, cpfSearch) => {
     userSearched = usuarios.find(u => u.cpf === parseInt(cpfSearch))
     if(userSearched === undefined)
@@ -32,6 +20,16 @@ function getUser(cpf, callback){
             console.log(error)
             callback(undefined)
         }
+    })
+}
+
+const pushUser = function(user){
+    fs.readFile('users.json', (err, data) => {
+        const loja = JSON.parse(data)
+        loja.usuarios.push(user)
+        fs.writeFile("users.json", JSON.stringify(loja), (err) => {
+            if(err) throw err
+        })
     })
 }
 
