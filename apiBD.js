@@ -52,5 +52,21 @@ app.route('/users')
         }
     })
 
+app.route('/users/admin')
+    .get((req, res) => {
+        try{
+            usuariosBD.listUsers((users) => {
+                if(users)
+                    res.status(200).json(users)
+                else
+                    res.status(404).json({message : "ERROR : Erro ao ler o arquivo de users"})
+            })
+        }
+        catch (err){
+            res.status(404).json({message : err})
+        }
+    })
+
+    
 
 app.listen(port)

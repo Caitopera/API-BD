@@ -28,6 +28,13 @@ function getUser(json, callback){
     })
 }
 
+const listUsers = (callback) => {
+    fs.readFile('users.json', (err, data) => {
+        const loja = JSON.parse(data)
+        callback(loja)
+    })
+}
+
 const pushUser = function(user){
     if(!validarJSON_Create(user))
         throw "ERROR : Erro no JSON para create"
@@ -66,5 +73,6 @@ const updateUser = (user) => {
 module.exports = {
     getUser,
     pushUser,
-    updateUser
+    updateUser,
+    listUsers
 }
