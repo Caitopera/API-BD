@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { validarJSON } = require('./validateJSON')
+const { validarJSON_Create, validarJSON_Get } = require('./validateJSON')
 
 const searchUser = (usuarios, cpfSearch) => {
     userSearched = usuarios.find(u => u.cpf === parseInt(cpfSearch))
@@ -9,12 +9,14 @@ const searchUser = (usuarios, cpfSearch) => {
         return userSearched
 }
 
-function getUser(cpf, callback){
+function getUser(json, callback){
+    if(!validarJSON_Get(json))
+        throw "ERROR : Erro no JSON para get"
     fs.readFile('users.json', (err, data) => {
         const loja = JSON.parse(data)
         let usuarios = loja['usuarios']
         try{
-            const userSearched = searchUser(usuarios, cpf)
+            const userSearched = searchUser(usuarios, json.cpf)
             if(!userSearched)
                 throw "ERROR : Usuario nao encontrado"
             callback(userSearched)
@@ -27,7 +29,7 @@ function getUser(cpf, callback){
 }
 
 const pushUser = function(user){
-    if(!validarJSON(user))
+    if(!validarJSON_Create(user))
         throw "ERROR : Erro no JSON para create"
 
     try{
@@ -48,7 +50,7 @@ const pushUser = function(user){
 }
 
 const updateUser = (user) => {
-    if(!validarJSON(user))
+    if(!validarJSON_Create(user))
         throw "ERROR : Erro no JSON para update"
 
     fs.readFile('users.json', (err, data) => {

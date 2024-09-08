@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 const ajv = new Ajv();
 
-const schema = {
+const schemaCreate = {
     type: "object",
     properties: {
         cpf: { type: "number" },
@@ -12,9 +12,18 @@ const schema = {
     additionalProperties: false
 };
 
-const validarSchemaJSON = (usuario) => {
-    const validate = ajv.compile(schema);
-    const valid = validate(usuario);
+const schemaGet = {
+    type: "object",
+    properties: {
+        cpf: { type: "number" }
+    },
+    required: ["cpf"],
+    additionalProperties: false
+}
+
+const validarSchemaCreateJSON = (json) => {
+    const validate = ajv.compile(schemaCreate);
+    const valid = validate(json);
     if(!valid)
         throw "ERROR : JSON nao segue o schema correto"
     return valid
@@ -32,16 +41,16 @@ const validarDataNascimento = (dateString) => {
     return true;
 }
 
-const validarCampos = (usuario) => {
+const validarCamposCreate = (json) => {
     // / --> delimita a regex | \ --> indica que o proximo char nao representa um char normal, mas sim um caractere especial (como um digito)
     // {qntd} --> quantidade desse caractere especial | $ --> indica o fim do texto
-    const regexCPF = /^\d{11}$/; 
-    const regexNome = /^\D+$/; // \D --> representa qualquer char q nao seja um digito | + --> ocorre 1 ou mais vezes
-    const validDataNascimento = validarDataNascimento(usuario.data_nascimento)
-    if(!regexCPF.test(usuario.cpf))
+    const regexCPF = /^\d{11}$/
+    const regexNome = /^\D+$/ // \D --> representa qualquer char q nao seja um digito | + --> ocorre 1 ou mais vezes
+    const validDataNascimento = validarDataNascimento(json.data_nascimento)
+    if(!regexCPF.test(json.cpf))
         throw "ERROR : cpf deve ser inteiro e conter 11 digitos" 
     
-    if(!regexNome.test(usuario.nome))
+    if(!regexNome.test(json.nome))
         throw "ERROR : nome deve conter apenas caracteres" 
     
     if(!validDataNascimento)
@@ -50,21 +59,35 @@ const validarCampos = (usuario) => {
     return true
 }
 
-const validarJSON = (usuario) => {
-    if(!validarSchemaJSON(usuario))
+const validarJSON_Create = (json) => {
+    if(!validarSchemaCreateJSON(json))
         return false
-    if(!validarCampos(usuario))
+    if(!validarCamposCreate(json))
         return false
 
     return true
 }
 
-/*console.log(validarJSON({
+const validarJSON_Get = (json) => {
+    const validate = ajv.compile(schemaGet);
+    const valid = validate(json);
+    if(!valid)
+        throw "ERROR : JSON nao segue o schema correto"
+
+    const regexCPF = /^\d{11}$/
+    if(!regexCPF.test(json.cpf))
+        throw "ERROR : cpf deve ser inteiro e conter 11 digitos" 
+
+    return true
+}
+
+/*console.log(validarJSON_Create({
     "cpf" : 12345678987,
     "nome" : "Jorge",
     "data_nascimento" : "12-12-2004"
 }))*/
 
 module.exports = {
-    validarJSON
+    validarJSON_Create,
+    validarJSON_Get
 }

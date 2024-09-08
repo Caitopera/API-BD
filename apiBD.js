@@ -5,19 +5,18 @@ const port = 3000
 
 app.use(express.json())
 
-app.route('/users/:cpf')
+app.route('/users')
     .get((req, res) => {
-        let parametros = req.params
-        usuariosBD.getUser(parametros.cpf, (user) => {
-            if(user){
+        if(!req.is('json'))
+            throw 'ERROR : Envie um arquivo no formato .json'
+        usuariosBD.getUser(req.body, (user) => {
+            if(user)
                 res.send(user)
-            }
             else
                 res.send("ERROR : Usuario nao encontrado")
         })
     })
 
-app.route('/users')
     .post((req, res) => {
         if(!req.is('json'))
             throw 'ERROR : Envie um arquivo no formato .json'
