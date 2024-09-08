@@ -9,10 +9,7 @@ const searchUser = (usuarios, cpfSearch) => {
         return userSearched
 }
 
-function getUser(json, callback){
-    if(!validarJSON_Get(json))
-        throw "ERROR : Erro no JSON para get"
-
+function getUser(cpf, callback){
     try{
         fs.readFile('users.json', (err, data) => {
             if(err){
@@ -30,7 +27,7 @@ function getUser(json, callback){
             }
 
             let usuarios = loja['usuarios']
-            const userSearched = searchUser(usuarios, json.cpf)
+            const userSearched = searchUser(usuarios, cpf)
             if(!userSearched){
                 callback(new Error("ERROR: Usuário não encontrado"), undefined);
                 return

@@ -8,11 +8,12 @@ swaggerSetup(app);
 
 app.use(express.json())
 
+
 app.route('/users')
     .get((req, res) => {
         try{
-            verificaTipoJSON(req, res)
-            usuariosBD.getUser(req.body, (err, data) => {
+            const cpf = req.query.cpf;
+            usuariosBD.getUser(cpf, (err, data) => {
                 if(err)
                     res.status(404).json({message: err.message})
                 else if(data)

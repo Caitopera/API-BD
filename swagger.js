@@ -18,23 +18,18 @@ const swaggerOptions = {
         '/users': {
           get: {
             summary: 'Retorna um usuário especificado pelo cpf',
-            requestBody: {
-              required: true,
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      cpf: {
-                        type: 'integer',
-                        description: '- cpf do usuário \n- Deve conter 11 digitos',
-                        example: 12345678912,
-                      },
-                    },
-                  },
-                },
-              },
-            },
+            parameters: [
+                {
+                    "name": "cpf",
+                    "in": "query",
+                    "required": true,
+                    "description": "CPF do usuário que deseja buscar.",
+                    "schema": {
+                        "type": "string",
+                        "example": "12345678900"
+                    }
+                }
+            ],
             responses: {
               200: {
                 description: 'Usuário encontrado',
