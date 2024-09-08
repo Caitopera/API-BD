@@ -10,9 +10,8 @@ app.use(express.json())
 
 app.route('/users')
     .get((req, res) => {
-        verificaTipoJSON(req)
-
         try{
+            verificaTipoJSON(req, res)
             usuariosBD.getUser(req.body, (err, data) => {
                 if(err)
                     res.status(404).json({message: err.message})
@@ -28,9 +27,8 @@ app.route('/users')
     })
 
     .post((req, res) => {
-        verificaTipoJSON(req)
-
         try{
+            verificaTipoJSON(req, res)
             usuariosBD.pushUser(req.body, (err, data) => {
                 if(err)
                     res.status(404).json({message: err.message})
@@ -46,9 +44,8 @@ app.route('/users')
     })
     
     .put((req, res) => {
-        verificaTipoJSON(req)
-
         try{
+            verificaTipoJSON(req, res)
             usuariosBD.updateUser(req.body, (err, data) => {
                 if(err)
                     res.status(404).json({message: err.message})
@@ -65,14 +62,12 @@ app.route('/users')
 
 app.route('/users/admin')
     .get((req, res) => {
-        verificaTipoJSON(req)
-
         try{
             usuariosBD.listUsers((err, data) => {
                 if(err)
                     res.status(404).json({message: err.message})
                 else if(data)
-                    res.status(200).json({message: data})
+                    res.status(200).json({data})
                 else
                     res.status(404).json({message: "ERROR : Erro inesperado ao tentar atualizar usuario"})
             })
@@ -83,9 +78,8 @@ app.route('/users/admin')
     })
 
     .delete((req, res) => {
-        verificaTipoJSON(req)
-
         try{
+            verificaTipoJSON(req, res)
             usuariosBD.deleteUser(req.body, (err, data) => {
                 if(err)
                     res.status(404).json({message: err.message})
@@ -100,9 +94,9 @@ app.route('/users/admin')
         }
     })
 
-const verificaTipoJSON = (req) => {
+const verificaTipoJSON = (req, res) => {
     if(!req.is('json'))
-        res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+        throw "ERROR : Envie um arquivo do tipo JSON"
 }
 
 app.listen(port)

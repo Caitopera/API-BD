@@ -196,22 +196,3 @@ module.exports = {
     listUsers,
     deleteUser
 }
-
-/*function getUser(json, callback){
-    if(!validarJSON_Get(json))
-        throw "ERROR : Erro no JSON para get"
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        let usuarios = loja['usuarios']
-        try{
-            const userSearched = searchUser(usuarios, json.cpf)
-            if(!userSearched)
-                throw "ERROR : Usuario nao encontrado"
-            callback(userSearched)
-        }
-        catch (error){
-            console.log(error)
-            callback(undefined)
-        }
-    })
-}*/

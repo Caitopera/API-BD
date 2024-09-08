@@ -28,6 +28,7 @@ const swaggerOptions = {
                       cpf: {
                         type: 'integer',
                         description: '- cpf do usuário \n- Deve conter 11 digitos',
+                        example: 12345678912,
                       },
                     },
                   },
@@ -43,13 +44,19 @@ const swaggerOptions = {
                       type: 'object',
                       properties: {
                         cpf: {
-                          type: 'integer',
+                            type: 'integer',
+                            description: '- cpf do usuário \n- Deve conter 11 digitos',
+                            example: 12345678912,
                         },
                         nome: {
-                          type: 'string',
+                            type: 'string',
+                            description: '- Nome do usuário\n- Não pode possuir digitos na string',
+                            example: "Jose",
                         },
                         data_nascimento: {
-                            type: 'string'
+                            type: 'string',
+                            description: '- Data de nascimento do usuário\n- Deve ser uma data válida no formato MM-DD-YYYY e não pode ser maior que a data atual',
+                            example: '12-23-1979',
                         },
                       },
                     },
@@ -85,14 +92,17 @@ const swaggerOptions = {
                       cpf: {
                         type: 'integer',
                         description: '- cpf do usuário \n- Deve conter 11 digitos',
+                        example: 12345678912,
                       },
                       nome: {
                         type: 'string',
                         description: '- Nome do usuário\n- Não pode possuir digitos na string',
+                        example: "Jose",
                       },
                       data_nascimento: {
                         type: 'string',
-                        description: '- Data de nascimento do usuário\n- Deve ser uma data válida no formato MM-DD-YYYY e não pode ser maior que a data atual'
+                        description: '- Data de nascimento do usuário\n- Deve ser uma data válida no formato MM-DD-YYYY e não pode ser maior que a data atual',
+                        example: '12-23-1979',
                       },
                     },
                   },
@@ -144,14 +154,17 @@ const swaggerOptions = {
                       cpf: {
                         type: 'integer',
                         description: '- cpf do usuário \n- Deve conter 11 digitos',
+                        example: 12345678912,
                       },
                       nome: {
                         type: 'string',
                         description: '- Nome do usuário\n- Não pode possuir digitos na string',
+                        example: "Jose",
                       },
                       data_nascimento: {
                         type: 'string',
-                        description: '- Data de nascimento do usuário\n- Deve ser uma data válida no formato MM-DD-YYYY e não pode ser maior que a data atual'
+                        description: '- Data de nascimento do usuário\n- Deve ser uma data válida no formato MM-DD-YYYY e não pode ser maior que a data atual',
+                        example: '12-23-1979',
                       },
                     },
                   },
@@ -176,6 +189,119 @@ const swaggerOptions = {
               },
               404: {
                 description: 'Erro ao atualizar usuário ou erro no formato do arquivo',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        message: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        '/users/admin':{
+         get: {
+            summary: 'Retorna uma lista dos usuários do sistema',
+            requestBody: {
+              required: false,
+            },
+            responses: {
+              200: {
+                description: 'Lista de usuários',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        usuarios: {
+                            type: 'array',
+                            description: '- Lista de usuários do sistema',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    cpf: {
+                                        type: 'integer',
+                                        description: '- cpf do usuário \n- Deve conter 11 digitos',
+                                        example: 12345678912,
+                                      },
+                                    nome: {
+                                        type: 'string',
+                                        description: '- Nome do usuário\n- Não pode possuir digitos na string',
+                                        example: "Jose",
+                                      },
+                                    data_nascimento: {
+                                        type: 'string',
+                                        description: '- Data de nascimento do usuário\n- Deve ser uma data válida no formato MM-DD-YYYY e não pode ser maior que a data atual',
+                                        example: '12-23-1979',
+                                      },
+                                }
+                            }
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              404: {
+                description: 'Erro na leitura do arquivo de usuários',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        message: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          delete: {
+            summary: 'Deleta um usuário do sistema',
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      cpf: {
+                        type: 'integer',
+                        description: '- cpf do usuário \n- Deve conter 11 digitos',
+                        example: 12345678912,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {
+              200: {
+                description: 'Usuário deletado',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        message: {
+                            type: 'string',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              404: {
+                description: 'Erro em deletar um usuário',
                 content: {
                   'application/json': {
                     schema: {

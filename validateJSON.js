@@ -81,12 +81,6 @@ const validarJSON_Get = (json) => {
     return true
 }
 
-/*console.log(validarJSON_Create({
-    "cpf" : 12345678987,
-    "nome" : "Jorge",
-    "data_nascimento" : "12-12-2004"
-}))*/
-
 module.exports = {
     validarJSON_Create,
     validarJSON_Get
