@@ -12,79 +12,181 @@ const searchUser = (usuarios, cpfSearch) => {
 function getUser(json, callback){
     if(!validarJSON_Get(json))
         throw "ERROR : Erro no JSON para get"
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        let usuarios = loja['usuarios']
-        try{
+
+    try{
+        fs.readFile('users.json', (err, data) => {
+            if(err){
+                callback(err, undefined)
+                return
+            } 
+
+            let loja
+            try{
+                loja = JSON.parse(data)
+            }
+            catch (parseErr) {
+                callback(new Error("ERROR: Falha ao parsear o arquivo JSON"), undefined);
+                return;
+            }
+
+            let usuarios = loja['usuarios']
             const userSearched = searchUser(usuarios, json.cpf)
-            if(!userSearched)
-                throw "ERROR : Usuario nao encontrado"
-            callback(userSearched)
-        }
-        catch (error){
-            console.log(error)
-            callback(undefined)
-        }
-    })
+            if(!userSearched){
+                callback(new Error("ERROR: Usuário não encontrado"), undefined);
+                return
+            }
+            callback(null, userSearched)
+        })
+    }
+    catch(err){
+        throw err
+    }
 }
 
 const listUsers = (callback) => {
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        callback(loja)
-    })
+    try{
+        fs.readFile('users.json', (err, data) => {
+            if(err){
+                callback(err, undefined)
+                return
+            }
+
+            let loja
+            try{
+                loja = JSON.parse(data)
+            }
+            catch (parseErr) {
+                callback(new Error("ERROR: Falha ao parsear o arquivo JSON"), undefined);
+                return;
+            }
+
+            callback(null, loja)
+        })
+    }
+    catch(err){
+        throw err
+    }
 }
 
-const pushUser = function(user){
+const pushUser = function(user, callback){
     if(!validarJSON_Create(user))
         throw "ERROR : Erro no JSON para create"
 
     try{
         fs.readFile('users.json', (err, data) => {
-            const loja = JSON.parse(data)
-            if(searchUser(loja.usuarios, user.cpf))
-                return false
+            if(err){
+                callback(err, undefined)
+                return
+            }
+
+            let loja
+            try{
+                loja = JSON.parse(data)
+            }
+            catch (parseErr) {
+                callback(new Error("ERROR: Falha ao parsear o arquivo JSON"), undefined);
+                return;
+            }
+
+            if(searchUser(loja.usuarios, user.cpf)){
+                callback(new Error("ERROR : Usuário já está cadastrado no sistema"), undefined)
+                return
+            }
             loja.usuarios.push(user)
             fs.writeFile("users.json", JSON.stringify(loja), (err) => {
-                if(err) throw err
+                if(err) {
+                    callback(err, undefined)
+                    return
+                }
+                callback(null, "Usuário Cadastrado")
             })
         })
-        return true
     }
-    catch{
-        return false
+    catch (err){
+        throw err
     }
 }
 
-const updateUser = (user) => {
+const updateUser = (user, callback) => {
     if(!validarJSON_Create(user))
         throw "ERROR : Erro no JSON para update"
 
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        const indexUser = loja.usuarios.findIndex((u) => {return u.cpf === parseInt(user.cpf)})
-        loja.usuarios[indexUser] = user
-        fs.writeFile("users.json", JSON.stringify(loja), (err) => {
-            if(err) throw err
+    try{
+        fs.readFile('users.json', (err, data) => {
+            if(err){
+                callback(err, undefined)
+                return
+            }
+
+            let loja
+            try{
+                loja = JSON.parse(data)
+            }
+            catch (parseErr) {
+                callback(new Error("ERROR: Falha ao parsear o arquivo JSON"), undefined);
+                return;
+            }
+
+            if(!searchUser(loja.usuarios, user.cpf)){
+                callback(new Error("ERROR : Usuário não está cadastrado no sistema"), undefined)
+                return
+            }
+            const indexUser = loja.usuarios.findIndex((u) => {return u.cpf === parseInt(user.cpf)})
+            loja.usuarios[indexUser] = user
+            fs.writeFile("users.json", JSON.stringify(loja), (err) => {
+                if(err) {
+                    callback(err, undefined)
+                    return
+                }
+                callback(null, "Usuário Atualizado")
+            })
         })
-    })
+    }
+    catch(err){
+        throw(err)
+    }
 }
 
 const deleteUser = (json, callback) => {
-    fs.readFile('users.json', (err, data) => {
-        const loja = JSON.parse(data)
-        let usuarios = loja['usuarios']
-        const userSearched = searchUser(usuarios, json.cpf)
-        if(!userSearched)
-            throw "ERROR : Usuario nao encontrado"
+    if(!validarJSON_Get(json))
+        throw "ERROR : Erro no JSON para delete"
 
-        usuarios = usuarios.filter(user => user.cpf !== userSearched.cpf)
-        loja['usuarios'] = usuarios;
-        fs.writeFile('users.json', JSON.stringify(loja, null, 2), (err) => {
-            if (err) throw err;
-            callback("Usuário deletado");
-        });
-    })
+    try{
+        fs.readFile('users.json', (err, data) => {
+            if(err){
+                callback(err, undefined)
+                return
+            }
+
+            let loja
+            try{
+                loja = JSON.parse(data)
+            }
+            catch (parseErr) {
+                callback(new Error("ERROR: Falha ao parsear o arquivo JSON"), undefined);
+                return;
+            }
+            let usuarios = loja['usuarios']
+            const userSearched = searchUser(usuarios, json.cpf)
+            if(!userSearched){
+                callback(new Error("ERROR : Usuario nao encontrado"), undefined)
+                return
+            }
+    
+            usuarios = usuarios.filter(user => user.cpf !== userSearched.cpf)
+            loja['usuarios'] = usuarios;
+            fs.writeFile('users.json', JSON.stringify(loja, null, 2), (err) => {
+                if (err) {
+                    callback(err, undefined)
+                    return
+                }
+                callback(null, "Usuário deletado");
+            });
+        })
+    }
+    catch(err){
+        throw err
+    }
 }
 
 module.exports = {

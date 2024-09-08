@@ -10,14 +10,16 @@ app.use(express.json())
 
 app.route('/users')
     .get((req, res) => {
-        if(!req.is('json'))
-            res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+        verificaTipoJSON(req)
+
         try{
-            usuariosBD.getUser(req.body, (user) => {
-                if(user)
-                    res.status(200).json(user)
+            usuariosBD.getUser(req.body, (err, data) => {
+                if(err)
+                    res.status(404).json({message: err.message})
+                else if(data)
+                    res.status(200).json(data)
                 else
-                    res.status(404).json({message : "ERROR : Usuario nao encontrado"})
+                    res.status(404).json({message: "ERROR : Erro inesperado ao tentar encontrar usuario"})
             })
         }
         catch (err){
@@ -26,14 +28,17 @@ app.route('/users')
     })
 
     .post((req, res) => {
-        if(!req.is('json'))
-            res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+        verificaTipoJSON(req)
 
         try{
-            if(!usuariosBD.pushUser(req.body))
-                res.status(404).json({message : "ERROR : Usuario já está cadastrado"})
-            else
-            res.status(200).json({message : "Usuario cadastrado"})
+            usuariosBD.pushUser(req.body, (err, data) => {
+                if(err)
+                    res.status(404).json({message: err.message})
+                else if(data)
+                    res.status(200).json({message: data})
+                else
+                    res.status(404).json({message: "ERROR : Erro inesperado ao tentar cadastrar usuario"})
+            })
         }
         catch (err){
             res.status(404).json({message : err})
@@ -41,11 +46,17 @@ app.route('/users')
     })
     
     .put((req, res) => {
-        if(!req.is('json'))
-            res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+        verificaTipoJSON(req)
+
         try{
-            usuariosBD.updateUser(req.body)
-            res.status(200).json({message : "Usuario atualizado"})
+            usuariosBD.updateUser(req.body, (err, data) => {
+                if(err)
+                    res.status(404).json({message: err.message})
+                else if(data)
+                    res.status(200).json({message: data})
+                else
+                    res.status(404).json({message: "ERROR : Erro inesperado ao tentar atualizar usuario"})
+            })
         }
         catch (err){
             res.status(404).json({message : err})
@@ -54,12 +65,16 @@ app.route('/users')
 
 app.route('/users/admin')
     .get((req, res) => {
+        verificaTipoJSON(req)
+
         try{
-            usuariosBD.listUsers((users) => {
-                if(users)
-                    res.status(200).json(users)
+            usuariosBD.listUsers((err, data) => {
+                if(err)
+                    res.status(404).json({message: err.message})
+                else if(data)
+                    res.status(200).json({message: data})
                 else
-                    res.status(404).json({message : "ERROR : Erro ao ler o arquivo de users"})
+                    res.status(404).json({message: "ERROR : Erro inesperado ao tentar atualizar usuario"})
             })
         }
         catch (err){
@@ -68,11 +83,16 @@ app.route('/users/admin')
     })
 
     .delete((req, res) => {
-        if(!req.is('json'))
-            res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+        verificaTipoJSON(req)
+
         try{
-            usuariosBD.deleteUser(req.body, (message) => {
-                res.status(200).json({message: message})
+            usuariosBD.deleteUser(req.body, (err, data) => {
+                if(err)
+                    res.status(404).json({message: err.message})
+                else if(data)
+                    res.status(200).json({message: data})
+                else
+                    res.status(404).json({message: "ERROR : Erro inesperado ao tentar atualizar usuario"})
             })
         }
         catch (err){
@@ -80,6 +100,9 @@ app.route('/users/admin')
         }
     })
 
-    
+const verificaTipoJSON = (req) => {
+    if(!req.is('json'))
+        res.status(404).json({message : "ERROR : Envie um arquivo do tipo JSON"})
+}
 
 app.listen(port)
