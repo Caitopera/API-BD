@@ -5,13 +5,13 @@ const swaggerOptions = {
     swaggerDefinition: {
       openapi: '3.0.0',
       info: {
-        title: 'Minha API',
+        title: 'API-BD',
         version: '1.0.0',
-        description: 'Documentação da API usando Swagger',
+        description: 'Documentação da atividade API de Banco de Dados I usando Swagger',
       },
       servers: [
         {
-          url: 'http://localhost:80',
+          url: 'http://http://44.196.19.42:80',
         },
       ],
       paths: {
