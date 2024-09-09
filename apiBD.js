@@ -1,15 +1,12 @@
 const usuariosBD = require('./usuariosBD')
 const express = require('express')
 const app = express()
-const cors = require('cors') 
 const port = process.env.PORT || 80;
 const swaggerSetup = require('./swagger');
 
 swaggerSetup(app);
 
 app.use(express.json())
-
-app.use(cors())
 
 app.route('/users')
     .get((req, res) => {

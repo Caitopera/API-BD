@@ -11,7 +11,7 @@ const swaggerOptions = {
       },
       servers: [
         {
-          url: 'http://http://44.196.19.42:80',
+          url: 'http://44.196.19.42:80',
         },
       ],
       paths: {
